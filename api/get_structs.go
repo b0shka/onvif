@@ -421,5 +421,4 @@ func getMediaStructByName(name string) (interface{}, error) {
 	default:
 		return nil, errors.New("there is no such method in the Media service")
 	}
-
 }

@@ -57,6 +57,11 @@ func (r *Request) WithEndpoint(endpoint string) *Request {
 	return r
 }
 
+func (r *Request) WithHeaders(headers map[string]string) *Request {
+	r.headers = headers
+	return r
+}
+
 func (r *Request) Do() *Response {
 	resp := &Response{}
 
@@ -78,9 +83,9 @@ func (r *Request) Do() *Response {
 
 	var response *http.Response
 	if r.ctx != nil {
-		response, resp.error = SendSoapWithCtx(r.ctx, r.httpClient, endpoint, soap.String())
+		response, resp.error = SendSoapWithCtx(r.ctx, r.httpClient, endpoint, soap.String(), r.headers)
 	} else {
-		response, resp.error = SendSoap(r.httpClient, endpoint, soap.String())
+		response, resp.error = SendSoap(r.httpClient, endpoint, soap.String(), r.headers)
 	}
 
 	resp.SetResponse(response)
