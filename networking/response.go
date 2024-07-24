@@ -70,9 +70,8 @@ func (r *Response) Unmarshal(responses ...interface{}) error {
 		if err != nil {
 			return err
 		}
-		fmt.Println(r.response.Status)
-		fmt.Println(body)
-		return invalidStatus
+
+		return fmt.Errorf("%s: %s", r.response.Status, body)
 	}
 
 	body, err := soapMessage.Body()
