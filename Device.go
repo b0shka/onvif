@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -22,7 +21,7 @@ import (
 // DeviceType alias for int
 type DeviceType int
 
-// Onvif Device Tyoe
+// Onvif Device Type
 const (
 	NVD DeviceType = iota
 	NVS
@@ -88,14 +87,6 @@ func (dev *Device) GetServices() map[string]string {
 // GetServices return available endpoints
 func (dev *Device) GetDeviceInfo() DeviceInfo {
 	return dev.info
-}
-
-func readResponse(resp *http.Response) string {
-	b, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		panic(err)
-	}
-	return string(b)
 }
 
 // GetAvailableDevicesAtSpecificEthernetInterface ...
@@ -193,17 +184,15 @@ func (dev *Device) InspectWithCtx(ctx context.Context, headers map[string]string
 func (dev *Device) inspect(ctx context.Context, headers map[string]string) (*device.GetCapabilitiesResponse, error) {
 	var err error
 	if ctx == nil {
-		_, err = dev.updateDeltaTime(nil)
+		_, err = dev.UpdateDeltaTime(headers)
 	} else {
-		_, err = dev.UpdateDeltaTimeCtx(ctx)
+		_, err = dev.UpdateDeltaTimeCtx(ctx, headers)
 	}
 	if err != nil {
 		return nil, err
 	}
 
-	request := dev.CreateRequest(device.GetCapabilities{Category: "All"}).WithContext(ctx).WithHeaders(headers)
-
-	resp := request.Do()
+	resp := dev.CreateRequest(device.GetCapabilities{Category: "All"}).WithContext(ctx).WithHeaders(headers).Do()
 	if resp.Error() != nil {
 		return nil, resp.Error()
 	}
@@ -229,16 +218,16 @@ func (dev *Device) inspect(ctx context.Context, headers map[string]string) (*dev
 	return &capabilitiesResponse, nil
 }
 
-func (dev *Device) UpdateDeltaTime() (time.Duration, error) {
-	return dev.updateDeltaTime(nil)
+func (dev *Device) UpdateDeltaTime(headers map[string]string) (time.Duration, error) {
+	return dev.updateDeltaTime(nil, headers)
 }
 
-func (dev *Device) UpdateDeltaTimeCtx(ctx context.Context) (time.Duration, error) {
-	return dev.updateDeltaTime(ctx)
+func (dev *Device) UpdateDeltaTimeCtx(ctx context.Context, headers map[string]string) (time.Duration, error) {
+	return dev.updateDeltaTime(ctx, headers)
 }
 
-func (dev *Device) updateDeltaTime(ctx context.Context) (time.Duration, error) {
-	resp := dev.CreateRequest(device.GetSystemDateAndTime{}).WithContext(ctx).Do()
+func (dev *Device) updateDeltaTime(ctx context.Context, headers map[string]string) (time.Duration, error) {
+	resp := dev.CreateRequest(device.GetSystemDateAndTime{}).WithContext(ctx).WithHeaders(headers).Do()
 	if resp.Error() != nil {
 		return 0, resp.Error()
 	}

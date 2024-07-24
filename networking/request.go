@@ -25,6 +25,7 @@ type Request struct {
 	httpClient *http.Client
 	username   string
 	password   string
+	deltaTime  time.Duration
 	endpoint   string
 	headers    map[string]string
 }

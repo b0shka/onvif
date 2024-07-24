@@ -11,7 +11,6 @@ import (
 )
 
 var invalidResponse = errors.New("invalid response")
-var invalidStatus = errors.New("return status code != 200")
 
 type Response struct {
 	response *http.Response

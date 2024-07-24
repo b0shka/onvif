@@ -87,7 +87,6 @@ func (msg SoapMessage) BodyError() (string, error) {
 	}
 
 	bodyError := strings.TrimSpace(doc.Text())
-
 	return bodyError, nil
 }
 
