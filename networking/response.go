@@ -59,21 +59,6 @@ func (r *Response) Unmarshal(responses ...interface{}) error {
 	}
 
 	data, err := r.Body()
-
-	if !r.StatusOK() {
-		fmt.Println(r.response.Status)
-		fmt.Println(r.response.StatusCode)
-		fmt.Println(r.response.Body, string(data))
-		fmt.Println(r.response.Proto)
-		fmt.Println(r.response.Header)
-		fmt.Println(r.response.Trailer)
-		fmt.Println(*r.response.Request)
-		fmt.Println(*r.response.TLS)
-		//TODO: доработать отправку ошибки
-		return invalidStatus
-	}
-
-	//data, err := r.Body()
 	if err != nil {
 		return err
 	}
@@ -81,6 +66,12 @@ func (r *Response) Unmarshal(responses ...interface{}) error {
 	body, err := gosoap.SoapMessage(data).Body()
 	if err != nil {
 		return err
+	}
+
+	if !r.StatusOK() {
+		fmt.Println(r.response.Status)
+		fmt.Println(r.response.Body, body)
+		return invalidStatus
 	}
 
 	for _, response := range responses {
