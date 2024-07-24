@@ -131,7 +131,7 @@ func GetAvailableDevicesAtSpecificEthernetInterface(interfaceName string) []Devi
 			}
 
 			dev := NewDevice(DeviceParams{Xaddr: strings.Split(xaddr, " ")[0]})
-			_, err := dev.Inspect()
+			_, err := dev.Inspect(nil)
 
 			if err != nil {
 				fmt.Println("Error", xaddr)
@@ -182,21 +182,23 @@ func (dev *Device) CreateRequest(method interface{}) *networking.Request {
 		WithUsernamePassword(dev.params.Username, dev.params.Password)
 }
 
-func (dev *Device) Inspect() (*device.GetCapabilitiesResponse, error) {
-	return dev.inspect(nil)
+func (dev *Device) Inspect(headers map[string]string) (*device.GetCapabilitiesResponse, error) {
+	return dev.inspect(nil, headers)
 }
 
-func (dev *Device) InspectWithCtx(ctx context.Context) (*device.GetCapabilitiesResponse, error) {
-	return dev.inspect(ctx)
+func (dev *Device) InspectWithCtx(ctx context.Context, headers map[string]string) (*device.GetCapabilitiesResponse, error) {
+	return dev.inspect(ctx, headers)
 }
 
-func (dev *Device) inspect(ctx context.Context) (*device.GetCapabilitiesResponse, error) {
+func (dev *Device) inspect(ctx context.Context, headers map[string]string) (*device.GetCapabilitiesResponse, error) {
 	_, err := dev.updateDeltaTime(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	resp := dev.CreateRequest(device.GetCapabilities{Category: "All"}).WithContext(ctx).Do()
+	request := dev.CreateRequest(device.GetCapabilities{Category: "All"}).WithContext(ctx).WithHeaders(headers)
+
+	resp := request.Do()
 	if resp.Error() != nil {
 		return nil, resp.Error()
 	}

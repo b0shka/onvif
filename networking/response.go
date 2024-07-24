@@ -57,6 +57,7 @@ func (r *Response) Unmarshal(responses ...interface{}) error {
 		return invalidResponse
 	}
 	if !r.StatusOK() {
+		//TODO: доработать отправку ошибки
 		return invalidStatus
 	}
 
