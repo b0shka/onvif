@@ -63,15 +63,16 @@ func (r *Response) Unmarshal(responses ...interface{}) error {
 		return err
 	}
 
+	fmt.Println(r.response.Body, string(data))
+	body, err := gosoap.SoapMessage(data).Body()
+	if err != nil {
+		return err
+	}
+
 	if !r.StatusOK() {
 		fmt.Println(r.response.Status)
 		fmt.Println(r.response.Body, string(data))
 		return invalidStatus
-	}
-
-	body, err := gosoap.SoapMessage(data).Body()
-	if err != nil {
-		return err
 	}
 
 	for _, response := range responses {
