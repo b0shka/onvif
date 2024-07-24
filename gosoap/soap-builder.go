@@ -3,7 +3,6 @@ package gosoap
 import (
 	"encoding/xml"
 	"errors"
-	"fmt"
 	"log"
 	"time"
 
@@ -58,11 +57,6 @@ func (msg SoapMessage) Body() (string, error) {
 		return "", err
 	}
 
-	fmt.Println(doc.Attr)
-	fmt.Println(doc.Tag)
-	fmt.Println(doc.ReadSettings)
-	fmt.Println(doc.Child)
-	fmt.Println(doc.Text())
 	root := doc.Root()
 	if root == nil {
 		return "", errors.New("root element not found")
@@ -83,6 +77,15 @@ func (msg SoapMessage) Body() (string, error) {
 	res, _ := doc.WriteToString()
 
 	return res, nil
+}
+
+func (msg SoapMessage) BodyError() (string, error) {
+	doc := etree.NewDocument()
+	if err := doc.ReadFromString(msg.String()); err != nil {
+		return "", err
+	}
+
+	return doc.Text(), nil
 }
 
 // AddStringBodyContent for Envelope
