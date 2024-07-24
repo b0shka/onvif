@@ -191,7 +191,12 @@ func (dev *Device) InspectWithCtx(ctx context.Context, headers map[string]string
 }
 
 func (dev *Device) inspect(ctx context.Context, headers map[string]string) (*device.GetCapabilitiesResponse, error) {
-	_, err := dev.updateDeltaTime(ctx)
+	var err error
+	if ctx == nil {
+		_, err = dev.updateDeltaTime(nil)
+	} else {
+		_, err = dev.UpdateDeltaTimeCtx(ctx)
+	}
 	if err != nil {
 		return nil, err
 	}

@@ -3,6 +3,7 @@ package networking
 import (
 	"encoding/xml"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 
@@ -57,6 +58,7 @@ func (r *Response) Unmarshal(responses ...interface{}) error {
 		return invalidResponse
 	}
 	if !r.StatusOK() {
+		fmt.Println(r.response.Status)
 		//TODO: доработать отправку ошибки
 		return invalidStatus
 	}
