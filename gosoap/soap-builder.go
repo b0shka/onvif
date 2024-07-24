@@ -4,6 +4,7 @@ import (
 	"encoding/xml"
 	"errors"
 	"log"
+	"strings"
 	"time"
 
 	"github.com/beevik/etree"
@@ -85,7 +86,9 @@ func (msg SoapMessage) BodyError() (string, error) {
 		return "", err
 	}
 
-	return doc.Text(), nil
+	bodyError := strings.TrimSpace(doc.Text())
+
+	return bodyError, nil
 }
 
 // AddStringBodyContent for Envelope
